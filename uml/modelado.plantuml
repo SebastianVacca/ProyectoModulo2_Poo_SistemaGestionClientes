@@ -1,4 +1,7 @@
 @startuml Gestion_Clientes
+class Sistema{
+    
+}
  class User{
     String id
     String name
@@ -30,7 +33,8 @@ class Actions{
     mostrarHistorial()
 }
 
-'Relaciones entre clases
+'Relaciones entre clases.
+Sistema o-- User
 User --> Rol : rol
 User o-- Admin 
 User *-- Actions
