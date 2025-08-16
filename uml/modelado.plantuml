@@ -1,0 +1,42 @@
+@startuml Gestion_Clientes
+ class User{
+    String id
+    String name
+    String userName
+    String password
+    Rol rol
+    Acciones[] acciones
+
+    udpdateUser()
+}
+interface Show{
+    showActions()
+}
+class Admin{
+    createUser()
+    searchUser()
+    deleteUser()
+    unlockUser()
+}
+
+enum Rol{
+    ADMINISTRADOR
+    ESTÁNDAR
+}
+class Actions{
+    String descripcion
+    Date fechaAccion
+
+    mostrarHistorial()
+}
+
+'Relaciones entre clases
+User --> Rol : rol
+User o-- Admin 
+User *-- Actions
+User <|-- Admin
+User ..|> Show : implementa
+Admin ..|> Show : implementa
+
+
+@enduml
