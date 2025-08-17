@@ -1,9 +1,28 @@
 package Model;
 
-import java.time.LocalDateTime;
-
 public class Actions {
     private String description;
-    private LocalDateTime timeStamp;
+    private long timeStamp;
 
+    public Actions(String description) {
+        this.description = description;
+        this.timeStamp = System.currentTimeMillis();
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String toString(){
+        return "[" + timeStamp +"]" + description;
+    }
+    
 }
