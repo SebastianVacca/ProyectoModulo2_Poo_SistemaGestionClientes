@@ -3,6 +3,7 @@ package services;
 import java.util.Scanner;
 
 import Model.Rol;
+import Model.Status;
 import Model.User;
 
 public class SystemManage {
@@ -18,9 +19,7 @@ public class SystemManage {
         return users;
     }
 
-    // public Integer getPosition() {
-    //     return position;
-    // }
+   
 
     public void addUser(User user){
         for (int i = 0; i < users.length; i++) {
@@ -34,18 +33,38 @@ public class SystemManage {
         System.out.println("El sistema no soporta más usuarios");
     }
 
+    public void removeUser(String id){
+        for (int i = 0; i < users.length; i++) {
+            User user = users[i];
+
+            if (user != null && user.getId().equals(id)) {
+                users[i] = null;
+                System.out.println("Usuario eliminado");
+            }
+        }
+    }
+
     public User login(String id, String password){
+        
        for (int i = 0; i < users.length; i++) {
             User user = users[i];
 
-            if (user != null && user.getId().equals(id) && user.getPassword().equals(password))  {
-                return user;
-            }
+            if (user.getStatus().equals(Status.DISABLED)) {
+                if (user != null && user.getId().equals(id) &&
+                        user.getPassword().equals(password)) {
+                    user.restartCountAttempts();
+                    return user;
+                }
+                user.setCountAttempts();
+            }     
+            System.out.println("Su usuario se encuentra bloqueado, por favor contacte a su administrador de sistema"); 
+            user.addAction("Bloqueo de usuario por exceder intentos de inicio de sesión");      
        }
        return null;
     }
 
     public void registerUser(Scanner sc){
+        
 
         String id;
         String name;
@@ -105,7 +124,81 @@ public class SystemManage {
 
     }
 
+    public String UptadePasswordUsersAdmin(Scanner sc, String id){
+        for (int i = 0; i < users.length; i++) {
+            User user = users[i];
 
+            if(user != null && user.getId().equals(id)){
+                System.out.print("Digite su contraseña actual: ");
+                String currentPassword = sc.nextLine();
+
+                if (user.getPassword().equals(currentPassword)) {
+                    String newPass;
+                    String confirmPass = "";
+                    do {
+                        System.out.print("Digite su nueva clave: ");
+                        newPass = sc.nextLine();
+
+                        if (!validateConditionUpdatePass(newPass)) {
+                            System.out.println("La clave debe tener mínimo 4 caracteres y maximo 10");
+                            continue;
+                        }
+
+                        System.out.print("Confirme su clave: ");
+                        confirmPass = sc.nextLine();
+
+                        if (!validateMatchPass(confirmPass, newPass)) {
+                           System.out.println("Las claves deben coincidir, por favor intente de nuevo");
+                        }
+                    
+                    } while (!validateMatchPass(confirmPass, newPass));
+
+                        user.setPassword(newPass);
+
+                } else {
+
+                    System.out.println("Contraseña incorrecta");
+                    return null;
+                }
+            } 
+            
+        }
+        System.out.println("Usuario no encontrado");
+
+        return null;
+    }
+
+    public void updateUser(){
+        System.out.println("===================== Actualizacion de datos de usuarios =====================");
+        System.out.println("");
+    }
+
+    public User searchUser(String id){
+        for (int i = 0; i < users.length; i++) {
+
+            User user = users[i];
+
+            if (users[i] != null && id.equals(user.getId())) {
+                return user;
+            } 
+        }
+        System.out.println("Usuario no encontrado");
+        return null;
+    }
+
+    public Boolean validateConditionUpdatePass(String newPass){
+        if (newPass.length() < 6 || newPass.length() >10) {
+            return true;
+        }
+        return false;
+    }
+    
+    public Boolean validateMatchPass(String confirmPass ,String newPass){
+        if (confirmPass.equals(newPass)) {
+            return true;
+        }
+        return false;
+    }
 }
 
 

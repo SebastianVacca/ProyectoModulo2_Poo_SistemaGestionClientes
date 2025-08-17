@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
 import Model.Rol;
+import Model.Status;
 import services.SystemManage;
 import Model.User;
 
@@ -88,7 +89,7 @@ public class App {
                                 if (sistemaManage.getUsers()[0] == null) {
                                     User usuario = new User(id, name, userName, password);// Crea un usuario con rol
                                                                                           // administrador por
-                                                                                          // defecto por ser le
+                                                                                          // defecto por ser el
                                                                                           // primer registro
                                     sistemaManage.addUser(usuario);// Agrega el usuario Administrador como un
                                                                    // usuario del sistema
@@ -131,34 +132,182 @@ public class App {
                                             ============ Menú de opciones para administrador ============
 
                                             1. Agregar Usuario
-                                            2. Actualizar Usuario
-                                            3. Eliminar Usuario
-                                            4. Desbloquear Usuario
-                                            5. Cambiar Rol Usuario
-                                            6. Cambiar clave
-                                            7. Historial de acciones
-                                            8. Salir
+                                            2. Buscar Usuario
+                                            3. Actualizar Usuario
+                                            4. Eliminar Usuario
+                                            5. Desbloquear Usuario
+                                            6. Cambiar Rol Usuario
+                                            7. Cambiar claves
+                                            8. Historial de acciones
+                                            9. Salir
                                             """);
                                             var submenu = sc.nextInt();
                                             sc.nextLine();
-                                            switch (submenu) {
+                                            switch (submenu) {                                              
+
                                                 case 1:
                                                     sistemaManage.registerUser(sc);
                                                     break;
                                                     
                                                 case 2:
-                                                    
+
+                                                    String searchId;
+                                                    User resultSearch;
+
+                                                    System.out.println("""
+                                                            ===================== Búsqueda de usuarios =====================
+                                                            ================================================================
+
+                                                            Digite el id:
+                                                            """);
+                                                            searchId = sc.nextLine();
+                                                            resultSearch = sistemaManage.searchUser(searchId);
+
+                                                            if (resultSearch != null) {
+                                                                System.out.printf("""
+                                                                        ====================== Resultado búsqueda ======================
+                                                                        ================================================================
+                                                                        Nombre: %s
+                                                                        Nombre de usuario: %s
+                                                                        Rol: %s                                                                        
+                                                                        Estado: %s
+                                                                        Acciones: %s
+                                                                        """, resultSearch.getName(),
+                                                                        resultSearch.getUserName(),
+                                                                        resultSearch.getRol(),
+                                                                        resultSearch.getStatus(),
+                                                                        resultSearch.getActions() );
+                                                            }
                                                     break;
 
                                                 case 3:
+                                                    System.out.println("""
+                                                            ===================== Edición de usuarios =====================
+                                                            ================================================================
+
+                                                            Digite el id:
+                                                            """);
+                                                            searchId = sc.nextLine();
+                                                            resultSearch = sistemaManage.searchUser(searchId);
+
+                                                            if (resultSearch != null) {
+                                                                System.out.printf("""
+                                                                        ====================== Resultado búsqueda ======================
+                                                                        ================================================================
+                                                                        Nombre: %s
+                                                                        Nombre de usuario: %s
+                                                                        Rol: %s                                                                        
+                                                                        Estado: %s
+                                                                        Acciones: %s%n
+                                                                        """, resultSearch.getName(),
+                                                                        resultSearch.getUserName(),
+                                                                        resultSearch.getRol(),
+                                                                        resultSearch.getStatus(),
+                                                                        resultSearch.getActions() );
+                                                            }
+
+                                                            System.out.printf("""
+                                                                    ¿Cuál dato desea editar?
+                                                                    1. Nombre
+                                                                    2. Nombre de usuario
+                                                                    3. Rol %s
+                                                                    4. Estado %s%n
+                                                                    0 para salir
+                                                                    """);
+                                                                    var optionMenuEdit = sc.nextInt();
+                                                                    sc.nextLine();
+
+                                                                    switch (optionMenuEdit) {
+                                                                        case 1:
+                                                                            System.out.print("Digite el Nombre: ");
+                                                                            String newName = sc.nextLine();
+                                                                            resultSearch.setName(newName);
+                                                                            break;
+
+                                                                        case 2:
+                                                                            System.out.print("Digite el Nombre de usuario: ");
+                                                                            String newUserName = sc.nextLine();
+                                                                            resultSearch.setUserName(newUserName);
+                                                                            
+                                                                            break;
+
+                                                                        case 3:
+                                                                            System.out.printf("""
+                                                                                    ===================== Configuración de rol ======================
+                                                                                    =================================================================
+                                                                                    
+                                                                                    El usuario %s actualmente tiene rol %s
+
+                                                                                    Por favor la opcion de rol con el que desea configurar al usuario
+                                                                                    actual
+
+                                                                                    1. Administrador ( privilegios absolutos sobre el sistema )
+                                                                                    2. Usuario ( Mínimos privilegios en el sistema )%n
+                                                                                    """, resultSearch.getName(), resultSearch.getRol());
+
+                                                                            var newRol = sc.nextInt();
+                                                                            if (newRol == 1) {
+                                                                                resultSearch.setRol(Rol.ADMIN);
+                                                                            } else {
+                                                                                resultSearch.setRol(Rol.GENERIC);
+                                                                            }
+                                                                            System.out.printf("Usuario %s configurado con rol %s%n",
+                                                                            resultSearch.getName(), resultSearch.getRol());                                                                                                                                                        
+                                                                            break;
+
+                                                                        case 4:
+                                                                            if (resultSearch.getCountAttempts() > 2) {
+                                                                                System.out.println("""
+                                                                                        ====================== Estado del usario ======================
+                                                                                        ===============================================================
+
+                                                                                        El usuario actualmente esta en estado %s en el sistema.
+
+                                                                                        Por favor elija el estado del estado usuario e el sistema,
+                                                                                        recuerde que del estado depende el acceso al sistema
+
+                                                                                        1. Activo
+                                                                                        2. Inactivo
+                                                                                        """);
+                                                                                var optionMenuStatus = sc.nextInt();
+                                                                                sc.nextLine();
+
+                                                                                if (optionMenuStatus == 1) {
+                                                                                    resultSearch.setStatus(Status.ENABLED);
+                                                                                    System.out.printf(
+                                                                                            "Usuario %s en estado %s",
+                                                                                            resultSearch.getName(),
+                                                                                            resultSearch.getStatus());
+                                                                                } else if (optionMenuStatus == 2) {
+                                                                                    resultSearch.setStatus(Status.DISABLED);
+                                                                                    System.out.printf(
+                                                                                            "Usuario %s en estado %s",
+                                                                                            resultSearch.getName(),
+                                                                                            resultSearch.getStatus());
+                                                                                } else {
+                                                                                    System.out.println("Opción inválida");
+                                                                                }                                                                                    
+                                                            
+                                                                            }                                                                            
+                                                                            break;
+
+                                                                        case 0:
+                                                                            System.out.println("saliendo.....");
+                                                                            break;
+                                                                    
+                                                                        default:
+                                                                            System.out.println("Opción inválida");
+                                                                            break;
+                                                                    }
                                                     
                                                     break;
 
                                                 case 4:
-                                                    
+                                                    sistemaManage.removeUser(id);
                                                     break;
 
                                                 case 5:
+                                                    
                                                     
                                                     break;
 
@@ -167,11 +316,15 @@ public class App {
                                                     break;
 
                                                 case 7:
+                                                    sistemaManage.UptadePasswordUsersAdmin(sc, id);
+                                                    break;
+
+                                                case 8:
                                                     usuarioLogin.showAction();
 
                                                     break;
 
-                                                case 8:
+                                                case 9:
                                                     System.out.println(".....: Cerrando sesión :.....");
                                                     break;
                                             

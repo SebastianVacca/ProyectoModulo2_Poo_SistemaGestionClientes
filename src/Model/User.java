@@ -7,7 +7,8 @@ public class User implements Show {
     private String password;
     private Rol rol;
     private Actions[] actions;
-    private Integer status;
+    private Status status;
+    private Integer countAttempts;
 
     public User(String id, String name, String userName, String password) {
         this.id = id;
@@ -15,6 +16,7 @@ public class User implements Show {
         this.userName = userName;
         this.password = password;
         this.rol = Rol.ADMIN;
+        this.status = Status.ENABLED;
         this.actions = new Actions[50];
     }
 
@@ -24,6 +26,7 @@ public class User implements Show {
         this.userName = userName;
         this.password = password;
         this.rol = rol;
+        this.status = Status.ENABLED;
         this.actions = new Actions[50];
     }
 
@@ -45,7 +48,7 @@ public class User implements Show {
     public Actions[] getActions() {
         return actions;
     }
-    public Integer getStatus() {
+    public Status getStatus() {
         return status;
     }
 
@@ -56,6 +59,18 @@ public class User implements Show {
         this.password = password;
     }
 
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     public void addAction(String description){
         for (int i = 0; i < actions.length; i++) {
             if (actions[i] == null) {
@@ -63,6 +78,18 @@ public class User implements Show {
                 break;
             }
         }
+    }
+
+    public Integer getCountAttempts() {
+        return countAttempts;
+    }
+
+    public void setCountAttempts() {
+    countAttempts++;
+    }
+
+    public void restartCountAttempts(){
+        countAttempts = 0;
     }
     
     @Override
