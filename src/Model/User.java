@@ -71,6 +71,10 @@ public class User implements Show {
         this.status = status;
     }
 
+    /**
+     * Método diseñado para insertar acciones en el Array actions[]
+     * @param description
+     */
     public void addAction(String description){
         for (int i = 0; i < actions.length; i++) {
             if (actions[i] == null) {
@@ -78,6 +82,44 @@ public class User implements Show {
                 break;
             }
         }
+    }
+    /**
+     * funcion para validar si la contraseña que se ingresa es igual 
+     * a la que ya está almacenada
+     * @param currentPass
+     * @return booleano
+     */
+    public Boolean validateCurrentPass(String currentPass){
+        if (getPassword().equals(currentPass)) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     * Funcion con retorno de Booleano que infroam si la condicion de min y max 
+     * se cumple
+     * @param newPass
+     * @return booleano
+     */
+    public Boolean validateConditionUpdatePass(String newPass){
+        if (newPass.length() < 6 || newPass.length() >10) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     * Funcion que valida si la confirmacion de la nueva contraeña es igual a 
+     * la contraseña nueva anteriormente guardada
+     * @param newPass
+     * @param confirmNewPass
+     * @return booleano
+     */
+    public Boolean validPassword(String newPass, String confirmNewPass){
+        if (confirmNewPass.equals(newPass)) {
+            this.password = newPass;
+            return true;
+        } 
+        return false;
     }
 
     public Integer getCountAttempts() {
@@ -87,7 +129,7 @@ public class User implements Show {
     public void setCountAttempts() {
     countAttempts++;
     }
-
+    
     public void restartCountAttempts(){
         countAttempts = 0;
     }

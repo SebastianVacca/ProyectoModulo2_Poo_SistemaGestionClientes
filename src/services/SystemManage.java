@@ -33,14 +33,29 @@ public class SystemManage {
         System.out.println("El sistema no soporta más usuarios");
     }
 
-    public void removeUser(String id){
-        for (int i = 0; i < users.length; i++) {
+    public void removeUser(String id, User currentUser){
+        if (currentUser != null && currentUser.getId().equals(id)) {
+            System.err.println("No se puede elminar su propio usuario");
+            return;
+        }
+
+        Boolean search = false;
+
+        for (int i = 0; i < users.length; i++) {            
+
             User user = users[i];
 
             if (user != null && user.getId().equals(id)) {
+                users[i].getName();
                 users[i] = null;
+                search = true;
                 System.out.println("Usuario eliminado");
-            }
+                break;
+            } 
+        }
+
+        if (!search) {
+            System.err.println("Usuario no enontrado");
         }
     }
 
@@ -49,16 +64,16 @@ public class SystemManage {
        for (int i = 0; i < users.length; i++) {
             User user = users[i];
 
-            if (user.getStatus().equals(Status.DISABLED)) {
+            //if (user.getStatus().equals(Status.DISABLED)) {
                 if (user != null && user.getId().equals(id) &&
                         user.getPassword().equals(password)) {
                     user.restartCountAttempts();
                     return user;
                 }
-                user.setCountAttempts();
-            }     
-            System.out.println("Su usuario se encuentra bloqueado, por favor contacte a su administrador de sistema"); 
-            user.addAction("Bloqueo de usuario por exceder intentos de inicio de sesión");      
+            //    user.setCountAttempts();
+            //}     
+            //System.out.println("Su usuario se encuentra bloqueado, por favor contacte a su administrador de sistema"); 
+            //user.addAction("Bloqueo de usuario por exceder intentos de inicio de sesión");      
        }
        return null;
     }
