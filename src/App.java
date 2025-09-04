@@ -1,23 +1,26 @@
 import java.util.Scanner;
 
+import Menus.MenuConfgRol;
+import Menus.MenuEstadoUser;
+import Menus.MenuRegistro;
 import Model.Rol;
-import Model.Status;
+// import Model.Status;
 import services.SystemManage;
 import Model.User;
 
 public class App {
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
+        SystemManage systemManage = new SystemManage();
+        MenuRegistro menuRegistro = new MenuRegistro();
+        MenuEstadoUser menuEstadoUsuario = new MenuEstadoUser();
+        MenuConfgRol menuConfgRol = new MenuConfgRol();
 
         String id = "";
-        String name;
-        String userName;
+        // String name;
+        // String userName;
         String password = "";
-        int menu;
-        
-
-        SystemManage sistemaManage = new SystemManage();
-        
+        int menu;    
         
             do {
 
@@ -61,59 +64,8 @@ public class App {
 
                     var opcion = sc.nextInt();
 
-                    if (opcion == 1) {
-                        String confirmPass;
-
-                        sc.nextLine();
-                        System.out.println("=============== Iniciando registro en el sistema ===============");
-                        System.out.print("Ingrese su documento de identidad: ");
-                        id = sc.nextLine();
-                        System.out.print("Ingrese su nombre completo: ");
-                        name = sc.nextLine();
-                        System.out.print("Digite un nombre de usuario: ");
-                        userName = sc.nextLine();
-                        do {
-                            System.out
-                                    .print("""
-                                            Digite una contraseña, recuerde debe ser mínimo de 4 digitos y máximo 10 dígitos,
-                                            recuerdela bien.
-                                            
-                                            """);
-                            do {
-                                System.out.print("Digite su clave: ");
-                                password = sc.nextLine();
-                                if (password.length() >= 4 && password.length() <= 10) {
-                                    break;
-                                } else {
-                                    System.out.println("La contraseña no cumple con las condiciones requeridas");
-                                }
-                            } while (password.length() < 4 || password.length() > 10);
-
-                            System.out.print("Por favor digite nuevamente su clave: ");
-                            confirmPass = sc.nextLine();
-
-                            if (confirmPass.equals(password)) {
-                                System.out.println("Registro completado con éxito");
-                                if (sistemaManage.getUsers()[0] == null) {
-                                    User usuario = new User(id, name, userName, password);// Crea un usuario con rol
-                                                                                          // administrador por
-                                                                                          // defecto por ser el
-                                                                                          // primer registro
-                                    sistemaManage.addUser(usuario);// Agrega el usuario Administrador como un
-                                                                   // usuario del sistema
-                                } else {
-                                    User usuario = new User(id, name, userName, password, Rol.GENERIC);
-                                    sistemaManage.addUser(usuario);// Agrega el usuario como usuario básico al
-                                                                   // sistema
-                                }
-                                break;
-                            }
-                            System.out.println("las claves no coinciden, intente de nuevo");
-                        } while (!confirmPass.equals(password));
-
-                    } else {
-                        System.out.println("========= Puedes cerrar la consola, te espramos pronto =========");
-                    }
+                    menuRegistro.mostrarMenuRegistro(opcion, systemManage);
+                    
                     break;
 
                 case 2:             
@@ -142,7 +94,7 @@ public class App {
 
                         } while (password.isEmpty());
 
-                        usuarioLogin = sistemaManage.login(id, password);
+                        usuarioLogin = systemManage.login(id, password);
 
                         if (usuarioLogin == null) {
                             System.err.println("Credenciales inválidas\n");
@@ -178,7 +130,7 @@ public class App {
                                             switch (submenu) {                                              
 
                                                 case 1://agregar usuario
-                                                    sistemaManage.registerUser(sc);
+                                                    systemManage.registerUser(sc);
                                                     break;
                                                     
                                                 case 2://Buscar usuario
@@ -194,7 +146,7 @@ public class App {
 
                                                             """);
                                                             searchId = sc.nextLine();
-                                                            resultSearch = sistemaManage.searchUser(searchId);
+                                                            resultSearch = systemManage.searchUser(searchId);
 
                                                             if (resultSearch != null) {
                                                                 System.out.printf("""
@@ -225,7 +177,7 @@ public class App {
 
                                                             """);
                                                             searchId = sc.nextLine();
-                                                            resultSearch = sistemaManage.searchUser(searchId);
+                                                            resultSearch = systemManage.searchUser(searchId);
 
                                                             if (resultSearch != null) {
                                                                 System.out.printf("""
@@ -285,19 +237,14 @@ public class App {
 
                                                                                     1. Administrador ( privilegios absolutos sobre el sistema )
                                                                                     2. Usuario ( Mínimos privilegios en el sistema )%n
+                                                                                    0. Volver
 
                                                                                     Digita una opción:
                                                                                     """, resultSearch.getName(), resultSearch.getRol());
 
                                                                             var newRol = sc.nextInt();
-                                                                            if (newRol == 1) {
-                                                                                resultSearch.setRol(Rol.ADMIN);
-                                                                                // return;
-                                                                            } else {
-                                                                                resultSearch.setRol(Rol.GENERIC);
-                                                                            }
-                                                                            System.out.printf("Usuario %s configurado con rol %s%n",
-                                                                            resultSearch.getName(), resultSearch.getRol());                                                                                                                                                        
+                                                                            menuConfgRol.mostrarMenuConfRol(newRol, resultSearch);          
+                                                                                                                                                                                                                        
                                                                             break;
 
                                                                         case 4:
@@ -312,6 +259,7 @@ public class App {
 
                                                                                         1. Activo
                                                                                         2. Inactivo
+                                                                                        0. Volver
 
                                                                                         Digita una opción:
 
@@ -319,26 +267,8 @@ public class App {
                                                                                 var optionMenuStatus = sc.nextInt();
                                                                                 sc.nextLine();
 
-                                                                                if (optionMenuStatus == 1) {
-                                                                                    resultSearch.setStatus(Status.ENABLED);
-                                                                                    System.out.printf(
-                                                                                            "Usuario %s en estado %s",
-                                                                                            resultSearch.getName(),
-                                                                                            resultSearch.getStatus());
-                                                                                            // return;
-                                                                                } else if (optionMenuStatus == 2) {
-                                                                                    resultSearch.setStatus(Status.DISABLED);
-                                                                                    System.out.printf(
-                                                                                            "Usuario %s en estado %s",
-                                                                                            resultSearch.getName(),
-                                                                                            resultSearch.getStatus());
-
-                                                                                            // return;
-
-                                                                                } else {
-                                                                                    System.out.println("Opción inválida");                                                                                    
-
-                                                                                }                                                                           
+                                                                                menuEstadoUsuario.mostrarMenuEstadoUsuario(optionMenuStatus, resultSearch);
+                                                                                                                                                         
                                                                             break;
 
                                                                         case 0:
@@ -353,7 +283,7 @@ public class App {
                                                     break;
 
                                                 case 4://Eliminar usuario
-                                                    sistemaManage.removeUser(id, usuarioLogin);
+                                                    systemManage.removeUser(id, usuarioLogin);
                                                     break;
 
                                                 case 5://Desbloquear usuario
@@ -365,7 +295,7 @@ public class App {
                                                             
                                                             """);
                                                             searchId = sc.nextLine();
-                                                            resultSearch = sistemaManage.searchUser(searchId);
+                                                            resultSearch = systemManage.searchUser(searchId);
 
                                                             System.out.printf(
                                                                     """
@@ -379,6 +309,7 @@ public class App {
 
                                                                             1. Activo
                                                                             2. Inactivo
+                                                                            0. Volver
 
                                                                             Digita una opción:
 
@@ -388,22 +319,7 @@ public class App {
                                                             var optionMenuStatus = sc.nextInt();
                                                             sc.nextLine();
 
-                                                            if (optionMenuStatus == 1) {
-                                                                resultSearch.setStatus(Status.ENABLED);
-                                                                System.out.printf(
-                                                                        "Usuario %s en estado %s",
-                                                                        resultSearch.getName(),
-                                                                        resultSearch.getStatus());
-                                                            } else if (optionMenuStatus == 2) {
-                                                                resultSearch.setStatus(Status.DISABLED);
-                                                                System.out.printf(
-                                                                        "Usuario %s en estado %s",
-                                                                        resultSearch.getName(),
-                                                                        resultSearch.getStatus());
-                                                            } else {
-                                                                System.out.println("Opción inválida");
-
-                                                            }
+                                                            menuEstadoUsuario.mostrarMenuEstadoUsuario(optionMenuStatus, resultSearch);
                                                     break;
 
                                                 case 6://Cambiar rol
@@ -414,7 +330,7 @@ public class App {
                                                             Digite el id:
                                                             """);
                                                     searchId = sc.nextLine();
-                                                    resultSearch = sistemaManage.searchUser(searchId);
+                                                    resultSearch = systemManage.searchUser(searchId);
 
                                                     System.out.printf(
                                                             """                                    
@@ -425,6 +341,7 @@ public class App {
 
                                                                     1. Administrador ( privilegios absolutos sobre el sistema )
                                                                     2. Usuario ( Mínimos privilegios en el sistema )%n
+                                                                    0. Volver
 
                                                                     Digita una opción:
 
@@ -432,18 +349,13 @@ public class App {
                                                             resultSearch.getName(), resultSearch.getRol());
 
                                                     var newRol = sc.nextInt();
-                                                    if (newRol == 1) {
-                                                        resultSearch.setRol(Rol.ADMIN);
-                                                    } else {
-                                                        resultSearch.setRol(Rol.GENERIC);
-                                                    }
-                                                    System.out.printf("Usuario %s configurado con rol %s%n",
-                                                            resultSearch.getName(), resultSearch.getRol());
+
+                                                    menuConfgRol.mostrarMenuConfRol(newRol, resultSearch);
                                                     
                                                     break;
 
                                                 case 7://Cambiar clave
-                                                    sistemaManage.UptadePasswordUsersAdmin(sc, id);
+                                                    systemManage.UptadePasswordUsersAdmin(sc, id);
                                                     break;
 
                                                 case 8://Historial acciones

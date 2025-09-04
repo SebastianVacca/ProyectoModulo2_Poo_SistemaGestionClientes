@@ -3,7 +3,6 @@ package services;
 import java.util.Scanner;
 
 import Model.Rol;
-import Model.Status;
 import Model.User;
 
 public class SystemManage {
@@ -87,7 +86,7 @@ public class SystemManage {
         String password;
         // int menu;
 
-        SystemManage sistemaManage = new SystemManage();
+        SystemManage systemManage = new SystemManage();
 
         String confirmPass;
 
@@ -120,16 +119,16 @@ public class SystemManage {
 
                             if (confirmPass.equals(password)) {
                                 System.out.println("Registro completado con éxito");
-                                if (sistemaManage.getUsers()[0] == null) {
+                                if (systemManage.getUsers()[0] == null) {
                                     User usuario = new User(id, name, userName, password);// Crea un usuario con rol
                                                                                           // administrador por
                                                                                           // defecto por ser le
                                                                                           // primer registro
-                                    sistemaManage.addUser(usuario);// Agrega el usuario Administrador como un
+                                    systemManage.addUser(usuario);// Agrega el usuario Administrador como un
                                                                    // usuario del sistema
                                 } else {
                                     User usuario = new User(id, name, userName, password, Rol.GENERIC);
-                                    sistemaManage.addUser(usuario);// Agrega el usuario como usuario básico al
+                                    systemManage.addUser(usuario);// Agrega el usuario como usuario básico al
                                                                    // sistema
                                 }
                                 break;
